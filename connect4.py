@@ -1,9 +1,11 @@
 ##########################################################################
 # File Name: connect4.py                                                 #
 # Author: David Miller                                                   #
-# Date: 2024-12-06                                                       #
+# Date: 2024-12-25                                                       #
 # Description: Connect 4 Game.                                           #
-# Copyright © 2024 David Miller. All rights reserved.                    #
+# Version: 3.1 (Release)                                                 #
+# Website: https://go.davidmiller.top/connect4                           #
+# © 2024 David Miller. All rights reserved.                              #
 ##########################################################################
 
 # Import sys in order to exit the program
@@ -12,9 +14,10 @@ from sys import exit
 # Copyright notice
 def copyrightNotice():
     print("")
-    print("Version: 3.0 (Public Build)")
     print("Author: David Miller")
-    print("Copyright © 2024 David Miller. All rights reserved.")
+    print("Website: https://go.davidmiller.top/connect4")
+    print("Version: 3.1 (Release)")
+    print("© 2024 David Miller. All rights reserved.")
     print("")
 
 def game():
@@ -26,6 +29,7 @@ def game():
     # Player 2 = "O"
     turn = 1
     winner = 0
+    choiceInvalid = False
     columnInvalid = False
 
     # Load the empty board
@@ -39,7 +43,7 @@ def game():
     while winner == 0:
         gameChoice = prompt(turn)
         # Resolve player's choice
-        columnInvalid, chess, chessHistory, turn, winner = userChoice(chess, chessHistory, columnInvalid, gameChoice, turn, winner)
+        chess, chessHistory, choiceInvalid, columnInvalid, turn, winner = userChoice(chess, chessHistory, choiceInvalid, columnInvalid, gameChoice, turn, winner)
         # Define row
         row1, row2, row3, row4, row5, row6 = defRow(chess)
         # User interface
@@ -65,8 +69,11 @@ def game():
                 print("Draw!")
             print("")
             menu()
-        if columnInvalid:
-            print("This column is invalid. Please try again.")
+        if choiceInvalid:
+            print("Your choice is invalid. Please try again.")
+            choiceInvalid = False
+        elif columnInvalid:
+            print("This column is full. Please try again.")
             columnInvalid = False
 
 def emptyBoard():
@@ -109,7 +116,7 @@ def prompt(turn):
             gameChoice = input("Player 2, enter a column (A-G) or quit (Q): ")
     return gameChoice
 
-def userChoice(chess, chessHistory, columnInvalid, gameChoice, turn, winner):
+def userChoice(chess, chessHistory, choiceInvalid, columnInvalid, gameChoice, turn, winner):
     columnCounter = 5
     # First and second element in the list below is a valid choice
     # Third element in the list below is its corresponding column
@@ -122,7 +129,7 @@ def userChoice(chess, chessHistory, columnInvalid, gameChoice, turn, winner):
                     turn = turn - 1
                     chess = chessHistory[turn - 1]
                 else:
-                    print("Your choice is invalid. Please try again.")
+                    choiceInvalid = True
             # Check if user want to quit
             elif gameChoices[0] == "Q" or gameChoices[1] == "q":
                 if turn % 2 == 1:
@@ -160,9 +167,9 @@ def userChoice(chess, chessHistory, columnInvalid, gameChoice, turn, winner):
                 else:
                     columnInvalid = True
         # Check if the player made a mistake
-        if gameChoice not in "AaBbCcDdEeFfGgQqUu":
-            columnInvalid = True
-    return [columnInvalid, chess, chessHistory, turn, winner]
+        if gameChoice not in "AaBbCcDdEeFfGgQqUu" or gameChoice == "":
+            choiceInvalid = True
+    return [chess, chessHistory, choiceInvalid, columnInvalid, turn, winner]
 
 def defRow(chess):
     # Convert columns into rows
