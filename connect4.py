@@ -3,7 +3,7 @@
 # Author: David Miller                                                   #
 # Date: 2024-12-25                                                       #
 # Description: Connect 4 Game.                                           #
-# Version: 3.1 (Release)                                                 #
+# Version: 3.2 (Release)                                                 #
 # Website: https://go.davidmiller.top/connect4                           #
 # © 2024 David Miller. All rights reserved.                              #
 ##########################################################################
@@ -16,7 +16,7 @@ def copyrightNotice():
     print("")
     print("Author: David Miller")
     print("Website: https://go.davidmiller.top/connect4")
-    print("Version: 3.1 (Release)")
+    print("Version: 3.2 (Release)")
     print("© 2024 David Miller. All rights reserved.")
     print("")
 
@@ -44,29 +44,33 @@ def game():
         gameChoice = prompt(turn)
         # Resolve player's choice
         chess, chessHistory, choiceInvalid, columnInvalid, turn, winner = userChoice(chess, chessHistory, choiceInvalid, columnInvalid, gameChoice, turn, winner)
-        # Define row
-        row1, row2, row3, row4, row5, row6 = defRow(chess)
-        # User interface
-        if winner != -1:
-            UI(chess)
-        # Winning condition
-        # 1. Vertical
-        winner = winVertical(chess, winner)
-        # 2. Horizontal
-        winner = winHorizontal(row1, row2, row3, row4, row5, row6, winner)
-        # 3. Diagonal
-        winner = winDiagonal(chess, winner)
 
+        if winner != -1:
+            # Define row
+            row1, row2, row3, row4, row5, row6 = defRow(chess)
+            # User interface
+            UI(chess)
+            # Winning condition
+            # 1. Vertical
+            winner = winVertical(chess, winner)
+            # 2. Horizontal
+            winner = winHorizontal(row1, row2, row3, row4, row5, row6, winner)
+            # 3. Diagonal
+            winner = winDiagonal(chess, winner)
+            winner = draw(row1, winner)
+        
         # Check if the winner is determined
-        winner = draw(row1, winner)
         if winner != 0:
             # Show who wins
-            if winner == 1:
-                print("Player 1 wins!")
-            if winner == 2:
-                print("Player 2 wins!")
-            if winner == 3:
+            if winner == 1 or winner == 2:
+                print("Player {} wins!".format(winner))
+            elif winner == 3:
                 print("Draw!")
+            elif winner == -1:
+                player = turnToPlayer(turn)
+                print("The game is interrupted by player {}".format(player))
+            else:
+                crash()
             print("")
             menu()
         if choiceInvalid:
@@ -82,7 +86,8 @@ def emptyBoard():
     while boardCounter >= 0:
         chess.append([" ", " ", " ", " ", " ", " "])
         boardCounter = boardCounter - 1
-    return chess
+    else:
+        return chess
 
 def UI(chess):
     # Print the board
@@ -104,46 +109,45 @@ def UI(chess):
 
 def prompt(turn):
     # Switch players
+    player = turnToPlayer(turn)
     if turn != 1:
-        if turn % 2 == 1:
-            gameChoice = input("Player 1, enter a column (A-G), undo (U) or quit (Q): ")
-        else:
-            gameChoice = input("Player 2, enter a column (A-G), undo (U) or quit (Q): ")
+        gameChoice = input("Player {}, enter a column (A-G), undo (U) or quit (Q): ".format(player))
     else:
-        if turn % 2 == 1:
-            gameChoice = input("Player 1, enter a column (A-G) or quit (Q): ")
-        else:
-            gameChoice = input("Player 2, enter a column (A-G) or quit (Q): ")
+        gameChoice = input("Player {}, enter a column (A-G) or quit (Q): ".format(player))
     return gameChoice
 
 def userChoice(chess, chessHistory, choiceInvalid, columnInvalid, gameChoice, turn, winner):
     columnCounter = 5
-    # First and second element in the list below is a valid choice
-    # Third element in the list below is its corresponding column
-    for gameChoices in [["A", "a", chess[0]], ["B", "b", chess[1]], ["C", "c", chess[2]], ["D", "d", chess[3]], ["E", "e", chess[4]], ["F", "f", chess[5]], ["G", "g", chess[6]], ["Q", "q"], ["U", "u"]]:
-        # Check which column did the player chose
-        if gameChoice == gameChoices[0] or gameChoice == gameChoices[1]:
-            # Check if user want to undo
-            if gameChoices[0] == "U" or gameChoices[1] == "u":
-                if turn >= 2:
-                    turn = turn - 1
-                    chess = chessHistory[turn - 1]
-                else:
-                    choiceInvalid = True
-            # Check if user want to quit
-            elif gameChoices[0] == "Q" or gameChoices[1] == "q":
-                if turn % 2 == 1:
-                    print("The game is interrupted by player 1")
-                else:
-                    print("The game is interrupted by player 2")
-                winner = -1
-            else:
-                # "[2]" means column X
+    gameChoice = gameChoice.strip()
+    # Check if the player made a mistake
+    if gameChoice not in "Aa1Bb2Cc3Dd4Ee5Ff6Gg7QqUu" or gameChoice == "":
+        choiceInvalid = True
+    
+    # Check if user want to quit
+    elif gameChoice == "Q" or gameChoice == "q":
+        print("")
+        winner = -1
+    
+    # Check if user want to undo
+    elif gameChoice == "U" or gameChoice == "u":
+        if turn >= 2:
+            turn = turn - 1
+            chess = chessHistory[turn - 1]
+        else:
+            choiceInvalid = True
+    
+    # Check which column the player chose
+    else:
+        # 1st-3rd element in the list below is a valid choice
+        # 4th element in the list below is its corresponding column
+        for gameChoices in [["A", "a", "1", chess[0]], ["B", "b", "2", chess[1]], ["C", "c", "3", chess[2]], ["D", "d", "4", chess[3]], ["E", "e", "5", chess[4]], ["F", "f", "6", chess[5]], ["G", "g", "7", chess[6]]]:
+            if gameChoice in gameChoices:
+                # "[-1]" means column X
                 # Check if the chosen column is full
-                if gameChoices[2][0] == " ":
+                if gameChoices[-1][0] == " ":
                     # Check which is the highest marker in the chosen row
                     while columnCounter >= 0:
-                        columnChess = gameChoices[2][columnCounter]
+                        columnChess = gameChoices[-1][columnCounter]
                         if columnChess == " ":
                             # Capture current board to "chessHistory"
                             # The for loop here is because "list.copy" cannot copy nested lists
@@ -157,19 +161,21 @@ def userChoice(chess, chessHistory, choiceInvalid, columnInvalid, gameChoice, tu
                                 chessHistory.append(columnsHistory)
                             # Put the marker on the top of the highest marker
                             if turn % 2 == 1:
-                                gameChoices[2][columnCounter] = "X"
+                                gameChoices[-1][columnCounter] = "X"
                             else:
-                                gameChoices[2][columnCounter] = "O"
+                                gameChoices[-1][columnCounter] = "O"
                             turn = turn + 1
                             break
                         else:
                             columnCounter = columnCounter - 1
                 else:
                     columnInvalid = True
-        # Check if the player made a mistake
-        if gameChoice not in "AaBbCcDdEeFfGgQqUu" or gameChoice == "":
-            choiceInvalid = True
     return [chess, chessHistory, choiceInvalid, columnInvalid, turn, winner]
+
+def crash():
+    print("An unexpected issue occurred and the game has crashed.")
+    print("")
+    menu()
 
 def defRow(chess):
     # Convert columns into rows
@@ -189,8 +195,7 @@ def winVertical(chess, winner):
                 return 1
             if column[columnWinCounter] == column[columnWinCounter + 1] == column[columnWinCounter + 2] == column[columnWinCounter + 3] == "O":
                 return 2
-    if winner == 0:
-        return 0
+    return winner
 
 def winHorizontal(row1, row2, row3, row4, row5, row6, winner):
     for row in [row1, row2, row3, row4, row5, row6]:
@@ -234,9 +239,17 @@ def draw(row1, winner):
         for draw in row1:
             if draw != " ":
                 drawCounter = drawCounter + 1
-        if drawCounter >= 7:
+        if drawCounter == 7:
             return 3
+        elif drawCounter > 7:
+            crash()
     return winner
+
+def turnToPlayer(turn):
+    if turn % 2 == 1:
+        return 1
+    else:
+        return 2
 
 def menu():
     # Main menu
@@ -246,6 +259,7 @@ def menu():
     menuChoice = input("Enter your choice: ")
     if menuChoice == "1":
         # Here we go!
+        print("")
         game()
     elif menuChoice == "2":
         # See ya
