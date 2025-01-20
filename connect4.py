@@ -1,11 +1,10 @@
 ##########################################################################
 # File Name: connect4.py                                                 #
 # Author: David Miller                                                   #
-# Date: 2024-12-25                                                       #
+# Date: 2025-01-20                                                       #
 # Description: Connect 4 Game.                                           #
-# Version: 3.2 (Release)                                                 #
-# Website: https://go.davidmiller.top/connect4                           #
-# © 2024 David Miller. All rights reserved.                              #
+# Version: 3.3 (Release)                                                 #
+# © 2025 David Miller. All rights reserved.                              #
 ##########################################################################
 
 # Import sys in order to exit the program
@@ -15,9 +14,8 @@ from sys import exit
 def copyrightNotice():
     print("")
     print("Author: David Miller")
-    print("Website: https://go.davidmiller.top/connect4")
-    print("Version: 3.2 (Release)")
-    print("© 2024 David Miller. All rights reserved.")
+    print("Version: 3.3 (Release)")
+    print("© 2025 David Miller. All rights reserved.")
     print("")
 
 def game():
@@ -69,8 +67,6 @@ def game():
             elif winner == -1:
                 player = turnToPlayer(turn)
                 print("The game is interrupted by player {}".format(player))
-            else:
-                crash()
             print("")
             menu()
         if choiceInvalid:
@@ -95,10 +91,7 @@ def UI(chess):
         print("+-----+-----+-----+-----+-----+-----+-----+")
         print("|  ", end="")
         for columnUICounter in [0, 1, 2, 3, 4, 5, 6]:
-            if chess[columnUICounter][rowUICounter] == " ":
-                print(" ", end="")
-            else:
-                print(chess[columnUICounter][rowUICounter], end="")
+            print(chess[columnUICounter][rowUICounter], end="")
             if columnUICounter <= 5:
                 print("  |  ", end="")
         print("  |")
@@ -172,11 +165,6 @@ def userChoice(chess, chessHistory, choiceInvalid, columnInvalid, gameChoice, tu
                     columnInvalid = True
     return [chess, chessHistory, choiceInvalid, columnInvalid, turn, winner]
 
-def crash():
-    print("An unexpected issue occurred and the game has crashed.")
-    print("")
-    menu()
-
 def defRow(chess):
     # Convert columns into rows
     row = []
@@ -239,10 +227,8 @@ def draw(row1, winner):
         for draw in row1:
             if draw != " ":
                 drawCounter = drawCounter + 1
-        if drawCounter == 7:
+        if drawCounter >= 7:
             return 3
-        elif drawCounter > 7:
-            crash()
     return winner
 
 def turnToPlayer(turn):
