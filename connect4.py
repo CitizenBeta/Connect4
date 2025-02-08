@@ -1,10 +1,10 @@
 ##########################################################################
 # File Name: connect4.py                                                 #
-# Author: David Miller                                                   #
-# Date: 2025-01-20                                                       #
+# Author: Zhang Anjun                                                    #
+# Date: 2025-02-08                                                       #
 # Description: Connect 4 Game.                                           #
-# Version: 3.3 (Release)                                                 #
-# © 2025 David Miller. All rights reserved.                              #
+# Version: 3.4 (Final Release)                                           #
+# © 2025 Zhang Anjun. All rights reserved.                               #
 ##########################################################################
 
 # Import sys in order to exit the program
@@ -13,9 +13,9 @@ from sys import exit
 # Copyright notice
 def copyrightNotice():
     print("")
-    print("Author: David Miller")
-    print("Version: 3.3 (Release)")
-    print("© 2025 David Miller. All rights reserved.")
+    print("Author: Zhang Anjun")
+    print("Version: 3.4 (Final Release)")
+    print("© 2025 Zhang Anjun. All rights reserved.")
     print("")
 
 def game():
