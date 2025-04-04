@@ -1,11 +1,9 @@
-##########################################################################
-# File Name: connect4.py                                                 #
-# Author: Zhang Anjun                                                    #
-# Date: 2025-02-08                                                       #
-# Description: Connect 4 Game.                                           #
-# Version: 3.4 (Final Release)                                           #
-# © 2025 Zhang Anjun. All rights reserved.                               #
-##########################################################################
+# File Name: connect4.py
+# Author: Zhang Anjun
+# Date: 2025-04-04
+# Description: A Python implementation of the classic text-based Connect 4 game.
+# Version: 3.5
+# © 2025 Zhang Anjun. All rights reserved.
 
 # Import sys in order to exit the program
 from sys import exit
@@ -14,7 +12,7 @@ from sys import exit
 def copyrightNotice():
     print("")
     print("Author: Zhang Anjun")
-    print("Version: 3.4 (Final Release)")
+    print("Version: 3.5")
     print("© 2025 Zhang Anjun. All rights reserved.")
     print("")
 
@@ -148,8 +146,8 @@ def userChoice(chess, chessHistory, choiceInvalid, columnInvalid, gameChoice, tu
                             for columns in chess:
                                 columnHistory = columns.copy()
                                 columnsHistory.append(columnHistory)
-                            if len(chessHistory) > turn - 1:
-                                chessHistory[turn - 1] = columnsHistory
+                            if len(chessHistory) > turn-1:
+                                chessHistory[turn-1] = columnsHistory
                             else:
                                 chessHistory.append(columnsHistory)
                             # Put the marker on the top of the highest marker
@@ -213,10 +211,10 @@ def winDiagonal(chess, winner):
     
     # Use range function to deal with diagonals of varying lengths
     for diagonal in diagonals:
-        for diagonalWinCounter in range(len(diagonal) - 3):
-            if diagonal[diagonalWinCounter] == diagonal[diagonalWinCounter + 1] == diagonal[diagonalWinCounter + 2] == diagonal[diagonalWinCounter + 3] == "X":
+        for diagonalWinCounter in range(len(diagonal)-3):
+            if diagonal[diagonalWinCounter] == diagonal[diagonalWinCounter+1] == diagonal[diagonalWinCounter+2] == diagonal[diagonalWinCounter+3] == "X":
                 return 1
-            if diagonal[diagonalWinCounter] == diagonal[diagonalWinCounter + 1] == diagonal[diagonalWinCounter + 2] == diagonal[diagonalWinCounter + 3] == "O":
+            if diagonal[diagonalWinCounter] == diagonal[diagonalWinCounter+1] == diagonal[diagonalWinCounter+2] == diagonal[diagonalWinCounter+3] == "O":
                 return 2
     return winner
 
